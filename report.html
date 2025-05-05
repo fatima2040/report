@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>تقرير برنامج</title>
+  <style>
+    body {
+      font-family: 'Arial';
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+    .container {
+      width: 210mm;
+      height: 297mm;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .header img {
+      width: 100%;
+      height: auto;
+      margin-bottom: 20px;
+    }
+    h2 {
+      text-align: center;
+      margin: 10px 0 30px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+    .value {
+      margin-top: 5px;
+      padding: 8px;
+      font-size: 16px;
+      background: #f0f0f0;
+      border: 1px solid #ccc;
+    }
+    .images {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .images img {
+      width: 48%;
+      height: auto;
+      border: 1px solid #ccc;
+      padding: 5px;
+    }
+    .btn {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      display: block;
+      margin: 20px auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="report">
+    <div class="header">
+      <img src="header.png" alt="هيدر المدرسة">
+    </div>
+
+    <h2>تقرير برنامج</h2>
+
+    <label>عنوان النشاط:</label>
+    <div class="value" id="title"></div>
+
+    <label>الهدف العام:</label>
+    <div class="value" id="generalGoal"></div>
+
+    <label>الهدف التفصيلي:</label>
+    <div class="value" id="detailedGoal"></div>
+
+    <label>الفئة المستهدفة، عدد المستفيدين، تاريخ التنفيذ والوصف:</label>
+    <div class="value" id="details"></div>
+
+    <label>اسم معدة التقرير:</label>
+    <div class="value" id="author"></div>
+
+    <div class="images" id="previewContainer"></div>
+
+    <button class="btn" onclick="generatePDF()">تحميل التقرير PDF</button>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script>
+    function fillDataFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      document.getElementById("title").textContent = params.get("title") || "";
+      document.getElementById("generalGoal").textContent = params.get("generalGoal") || "";
+      document.getElementById("detailedGoal").textContent = params.get("detailedGoal") || "";
+      document.getElementById("details").textContent = params.get("details") || "";
+      document.getElementById("author").textContent = params.get("author") || "";
+
+      const imageLinks = params.getAll("img");
+      const previewContainer = document.getElementById("previewContainer");
+      imageLinks.forEach(src => {
+        const img = document.createElement("img");
+        img.src = decodeURIComponent(src);
+        previewContainer.appendChild(img);
+      });
+    }
+
+    function generatePDF() {
+      const element = document.getElementById("report");
+      const opt = {
+        margin: 0,
+        filename: 'تقرير_برنامج.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save();
+    }
+
+    fillDataFromURL();
+  </script>
+</body>
+</html>
