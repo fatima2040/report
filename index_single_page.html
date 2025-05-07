@@ -1,0 +1,179 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>تقرير برنامج - صفحة واحدة</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f0f0;
+      text-align: center;
+      direction: rtl;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      background: #fff;
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #ccc;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      text-align: center;
+    }
+    .images-preview {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .images-preview img {
+      width: 140px;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid #999;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .images-preview img:hover {
+      transform: scale(1.05);
+    }
+    button {
+      margin-top: 25px;
+      padding: 12px 24px;
+      font-size: 16px;
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    footer img {
+      margin-top: 30px;
+      width: 100%;
+      border-radius: 0 0 10px 10px;
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+      .container {
+        box-shadow: none;
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="report">
+    <img src="header.png" alt="هيدر" style="width: 100%; border-radius: 10px 10px 0 0;" />
+
+    <form>
+      <label>📌 عنوان النشاط:</label>
+      <input type="text" placeholder="اكتبي عنوان النشاط هنا">
+
+      <label>🎯 الهدف العام:</label>
+      <textarea placeholder="اكتبي الهدف العام..."></textarea>
+
+      <label>🎨 الهدف التفصيلي:</label>
+      <textarea placeholder="اكتبي الهدف التفصيلي..."></textarea>
+
+      <label>📝 الوصف:</label>
+      <textarea placeholder="اكتبي وصفًا للنشاط..."></textarea>
+
+      <label>🧠 عدد المستفيدات والفئة المستهدفة:</label>
+      <input type="text" placeholder="عدد الطالبات والفئة المستهدفة">
+
+      <label>📅 تاريخ التنفيذ:</label>
+      <input type="date">
+
+      <label>✍️ اسم معدة التقرير:</label>
+      <input type="text" placeholder="اكتبي اسمك هنا يدويًا">
+
+      <label>📎 الشواهد (اختاري عدد الصور):</label>
+      <select id="imageCount" onchange="generateImageInputs()">
+        <option value="0">-- اختاري عدد الصور --</option>
+        <option value="1">1 صورة</option>
+        <option value="2">صورتين</option>
+        <option value="3">3 صور</option>
+        <option value="4">4 صور</option>
+      </select>
+
+      <div id="imageInputs"></div>
+      <div class="images-preview" id="imagePreview"></div>
+
+      <button type="button" onclick="downloadPDF()">📄 تحميل التقرير PDF</button>
+    </form>
+
+    <footer>
+      <img src="footer.png" alt="فوتر">
+    </footer>
+  </div>
+
+  <script>
+    function generateImageInputs() {
+      const count = parseInt(document.getElementById("imageCount").value);
+      const container = document.getElementById("imageInputs");
+      const preview = document.getElementById("imagePreview");
+      container.innerHTML = '';
+      preview.innerHTML = '';
+
+      for (let i = 0; i < count; i++) {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = "image/*";
+        input.onchange = function (event) {
+          const file = event.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              const img = document.createElement("img");
+              img.src = e.target.result;
+              img.onclick = () => window.open(img.src, "_blank");
+              preview.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+          }
+        };
+        container.appendChild(input);
+      }
+    }
+
+    function downloadPDF() {
+      const element = document.getElementById("report");
+      const opt = {
+        margin: 0.2,
+        filename: 'تقرير_برنامج.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save();
+    }
+  </script>
+
+</body>
+</html>
