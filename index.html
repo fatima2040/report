@@ -2,159 +2,93 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>تقرير برنامج - مخصص للجوال</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <meta charset="UTF-8">
+  <title>تقرير برنامج</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f0f0f0;
+      font-family: 'Arial', sans-serif;
+      margin: 20px;
       text-align: center;
       direction: rtl;
-      padding: 15px;
-      margin: 0;
     }
-    .container {
-      background: #fff;
-      max-width: 95%;
-      margin: auto;
-      padding: 20px;
+    h1 {
+      background-color: #0b3d5c;
+      color: white;
+      padding: 10px;
       border-radius: 10px;
-      box-shadow: 0 0 8px #ccc;
+      font-size: 26px;
     }
     label {
-      display: block;
-      margin-top: 18px;
       font-weight: bold;
-      font-size: 15px;
-    }
-    input, textarea, select {
-      width: 100%;
-      padding: 10px;
-      margin-top: 6px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-      text-align: center;
-    }
-    .images-preview {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
+      display: block;
       margin-top: 15px;
     }
-    .images-preview img {
+    input, textarea {
+      width: 80%;
+      padding: 10px;
+      margin-top: 5px;
+      font-size: 16px;
+    }
+    .images-grid {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .images-grid img {
       width: 120px;
       height: 120px;
       object-fit: cover;
-      border-radius: 8px;
-      border: 1px solid #aaa;
+      border-radius: 10px;
       cursor: pointer;
-      transition: transform 0.2s;
+      transition: 0.3s;
     }
-    .images-preview img:hover {
+    .images-grid img:hover {
       transform: scale(1.05);
     }
-    button {
-      margin-top: 25px;
-      padding: 10px 20px;
-      background-color: #2ecc71;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    footer img {
-      margin-top: 20px;
-      width: 100%;
-      border-radius: 0 0 10px 10px;
+    .signatures {
+      margin-top: 50px;
     }
   </style>
 </head>
 <body>
+  <h1>تقرير برنامج</h1>
 
-  <div class="container" id="report">
-    <img src="header.png" alt="هيدر" style="width: 100%; border-radius: 10px 10px 0 0;" />
+  <label>عنوان النشاط:</label>
+  <input type="text" placeholder="اكتبي عنوان النشاط هنا">
 
-    <form>
-      <label>📌 عنوان النشاط:</label>
-      <input type="text" placeholder="اكتبي عنوان النشاط هنا">
+  <label>الهدف العام:</label>
+  <input type="text" placeholder="اكتبي الهدف العام...">
 
-      <label>🎯 الهدف العام:</label>
-      <textarea placeholder="اكتبي الهدف العام..."></textarea>
+  <label>الهدف التفصيلي:</label>
+  <input type="text" placeholder="اكتبي الهدف التفصيلي...">
 
-      <label>🎨 الهدف التفصيلي:</label>
-      <textarea placeholder="اكتبي الهدف التفصيلي..."></textarea>
+  <label>الوصف:</label>
+  <textarea placeholder="اكتبي وصفًا مختصرًا للنشاط..."></textarea>
 
-      <label>📝 الوصف:</label>
-      <textarea placeholder="اكتبي وصفًا للنشاط..."></textarea>
+  <label>عدد المستفيدات والفئة المستهدفة:</label>
+  <input type="text" placeholder="مثلاً: ٢٢ طالبة - الصف الأول الثانوي">
 
-      <label>🧠 عدد المستفيدات والفئة المستهدفة:</label>
-      <input type="text" placeholder="عدد الطالبات والفئة المستهدفة">
+  <label>تاريخ التنفيذ:</label>
+  <input type="text" placeholder="مثلاً: ١٤٤٦/٠١/٠١هـ">
 
-      <label>📅 تاريخ التنفيذ:</label>
-      <input type="date">
+  <label>✍️ اسم معدة التقرير:</label>
+  <input type="text" placeholder="اكتبي اسمك هنا">
 
-      <label>✍️ اسم معدة التقرير:</label>
-      <input type="text" placeholder="اكتبي اسمك هنا يدويًا">
-
-      <label>📎 الشواهد (اختاري عدد الصور):</label>
-      <select id="imageCount" onchange="generateImageInputs()">
-        <option value="0">-- اختاري عدد الصور --</option>
-        <option value="1">1 صورة</option>
-        <option value="2">صورتين</option>
-        <option value="3">3 صور</option>
-        <option value="4">4 صور</option>
-      </select>
-
-      <div id="imageInputs"></div>
-      <div class="images-preview" id="imagePreview"></div>
-
-      <button type="button" onclick="downloadPDF()">📄 تحميل التقرير PDF</button>
-    </form>
-
-    <footer>
-      <img src="footer.png" alt="فوتر">
-    </footer>
+  <label>📎 الشواهد (اختاري عدد الصور):</label>
+  <div class="images-grid">
+    <a href="https://i.imgur.com/yA2gTtE.jpg" target="_blank">
+      <img src="https://i.imgur.com/yA2gTtE.jpg" alt="صورة 1">
+    </a>
+    <a href="https://i.imgur.com/SWrHM6H.jpg" target="_blank">
+      <img src="https://i.imgur.com/SWrHM6H.jpg" alt="صورة 2">
+    </a>
   </div>
 
-  <script>
-    function generateImageInputs() {
-      const count = parseInt(document.getElementById("imageCount").value);
-      const container = document.getElementById("imageInputs");
-      const preview = document.getElementById("imagePreview");
-      container.innerHTML = '';
-      preview.innerHTML = '';
-
-      for (let i = 0; i < count; i++) {
-        const input = document.createElement("input");
-        input.type = "file";
-        input.accept = "image/*";
-        input.onchange = function (event) {
-          const file = event.target.files[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-              const img = document.createElement("img");
-              img.src = e.target.result;
-              img.onclick = () => window.open(img.src, "_blank");
-              preview.appendChild(img);
-            };
-            reader.readAsDataURL(file);
-          }
-        };
-        container.appendChild(input);
-      }
-    }
-
-    function downloadPDF() {
-      const element = document.getElementById("report");
-      html2pdf().from(element).save("تقرير_برنامج.pdf");
-    }
-  </script>
-
+  <div class="signatures">
+    <p>مديرة المدرسة: أ. أسماء القرشي</p>
+    <p>وكيلة الشؤون التعليمية: أ. جميلة الزهراني</p>
+  </div>
 </body>
 </html>
