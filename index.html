@@ -1,155 +1,83 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <title>تقرير برنامج</title>
   <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      background-color: #f4f4f4;
-      direction: rtl;
-    }
-    .container {
-      width: 210mm;
-      min-height: 297mm;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      box-sizing: border-box;
-      position: relative;
-    }
-    .header img, .footer img {
-      width: 100%;
-      height: auto;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    label {
-      display: block;
-      font-weight: bold;
-      margin-top: 15px;
-      font-size: 16px;
-    }
-    .value, select, input[type="file"], input[type="text"] {
-      background: #f9f9f9;
+    body { font-family: 'Arial', sans-serif; text-align: center; direction: rtl; }
+    .image-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 20px; }
+    .image-grid img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
       border: 1px solid #ccc;
-      padding: 10px;
-      font-size: 15px;
-      margin-top: 5px;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    .images {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 15px;
-    }
-    .images img {
-      width: 48%;
-      height: auto;
-      border: 1px solid #ccc;
-      padding: 5px;
-    }
-    .btn {
-      background-color: #28a745;
-      color: white;
-      border: none;
-      padding: 12px 25px;
-      font-size: 16px;
+      border-radius: 8px;
       cursor: pointer;
-      border-radius: 5px;
-      display: block;
-      margin: 30px auto 10px;
+      transition: transform 0.2s;
+    }
+    .image-grid img:hover { transform: scale(1.05); }
+    .hidden { display: none; }
+
+    @media print {
+      .image-grid img {
+        width: 100px;
+        height: 100px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container" id="report">
-    <div class="header">
-      <img src="header.png" alt="هيدر المدرسة">
-    </div>
 
-    <h2>📋 تقرير برنامج</h2>
+<h3>📎 الشواهد (اختاري عدد الصور):</h3>
+<select id="imageCountSelect">
+  <option value="">-- اختاري عدد الصور --</option>
+  <option value="1">1 صورة</option>
+  <option value="2">2 صورتين</option>
+  <option value="3">3 صور</option>
+  <option value="4">4 صور</option>
+</select>
 
-    <label>📝 عنوان النشاط:</label>
-    <input type="text" class="value" id="title" placeholder="اكتبي عنوان النشاط">
+<div id="fileInputs"></div>
+<div class="image-grid" id="imagePreviewGrid"></div>
 
-    <label>🎯 الهدف العام:</label>
-    <input type="text" class="value" id="generalGoal" placeholder="اكتبي الهدف العام">
+<script>
+  const imageCountSelect = document.getElementById('imageCountSelect');
+  const fileInputs = document.getElementById('fileInputs');
+  const imagePreviewGrid = document.getElementById('imagePreviewGrid');
 
-    <label>🎨 الهدف التفصيلي:</label>
-    <input type="text" class="value" id="detailedGoal" placeholder="اكتبي الهدف التفصيلي">
+  imageCountSelect.addEventListener('change', function () {
+    const count = parseInt(this.value);
+    fileInputs.innerHTML = '';
+    imagePreviewGrid.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.addEventListener('change', previewImages);
+      fileInputs.appendChild(input);
+    }
+  });
 
-    <label>📝 الوصف:</label>
-    <input type="text" class="value" id="description" placeholder="اكتبي وصف النشاط">
-
-    <label>🧠 عدد المستفيدات والفئة المستهدفة:</label>
-    <input type="text" class="value" id="audience" placeholder="اكتبي عدد المستفيدات والفئة">
-
-    <label>📅 تاريخ التنفيذ:</label>
-    <input type="text" class="value" id="date" placeholder="اكتبي تاريخ التنفيذ">
-
-    <label>✍️ اسم معدة التقرير:</label>
-    <input type="text" id="authorInput" class="value" placeholder="اكتبي اسمك هنا">
-
-    <label>📎 الشواهد (اختاري عدد الصور):</label>
-    <select id="imageCount" onchange="renderImageInputs()">
-      <option value="0">-- اختاري عدد الصور --</option>
-      <option value="1">1 صورة</option>
-      <option value="2">2 صور</option>
-      <option value="3">3 صور</option>
-      <option value="4">4 صور</option>
-    </select>
-    <div id="imageInputs"></div>
-    <div class="images" id="previewContainer"></div>
-
-    <div class="footer">
-      <img src="footer.png" alt="فوتر المدرسة">
-    </div>
-
-    <button class="btn" onclick="generatePDF()">📄 تحميل التقرير PDF</button>
-  </div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script>
-    function renderImageInputs() {
-      const count = parseInt(document.getElementById("imageCount").value);
-      const imageInputsDiv = document.getElementById("imageInputs");
-      const previewContainer = document.getElementById("previewContainer");
-      imageInputsDiv.innerHTML = "";
-      previewContainer.innerHTML = "";
-
-      for (let i = 0; i < count; i++) {
-        const input = document.createElement("input");
-        input.type = "file";
-        input.accept = "image/*";
-        input.onchange = (event) => {
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            const img = document.createElement("img");
-            img.src = e.target.result;
-            previewContainer.appendChild(img);
-          }
-          reader.readAsDataURL(event.target.files[0]);
-        }
-        imageInputsDiv.appendChild(input);
+  function previewImages() {
+    imagePreviewGrid.innerHTML = '';
+    const files = fileInputs.querySelectorAll('input[type="file"]');
+    files.forEach(fileInput => {
+      const file = fileInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.title = file.name;
+          img.onclick = () => window.open(e.target.result, '_blank');
+          imagePreviewGrid.appendChild(img);
+        };
+        reader.readAsDataURL(file);
       }
-    }
+    });
+  }
+</script>
 
-    function generatePDF() {
-      const authorName = document.getElementById("authorInput").value;
-      const authorLabel = document.createElement("div");
-      authorLabel.className = "value";
-      authorLabel.textContent = authorName;
-      document.getElementById("authorInput").replaceWith(authorLabel);
-
-      const element = document.getElementById("report");
-      html2pdf().from(element).save('تقرير_برنامج.pdf');
-    }
-  </script>
 </body>
 </html>
